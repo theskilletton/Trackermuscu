@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Programme muscu · Haut du corps prioritaire</title>
+<meta name="description" content="Programme de prise de muscle : 3 séances salle orientées haut du corps, 2 séances maison (tractions, abdos) et gainage quotidien.">
+<meta name="theme-color" content="#0e1014">
+<!--
+  Pour modifier le programme : édite les objets SEANCES, SEMAINE et REGLES dans le <script> en bas.
+  Tout le reste (onglets, volume hebdo, cases à cocher, minuteur) se met à jour tout seul.
+  Pour GitHub Pages : garde le nom index.html à la racine du dépôt.
+-->
+<style>
+  :root {
+    --bg: #0e1014;
+    --surface: #171a21;
+    --surface-2: #20242e;
+    --line: #2b303b;
+    --text: #eef0f4;
+    --muted: #9aa2b1;
+    --c: #ff8a4c;
+    --radius: 14px;
+    color-scheme: dark light;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f4f5f8;
+      --surface: #ffffff;
+      --surface-2: #eef0f4;
+      --line: #dde1e8;
+      --text: #14171d;
+      --muted: #5d6574;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding-bottom: 120px;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+
+  header.top { padding: 24px 18px 12px; max-width: 760px; margin: 0 auto; }
+  .kicker { font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0; font-size: .95rem; }
+
+  nav.tabs {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.tabs .inner {
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 10px 14px; max-width: 760px; margin: 0 auto;
+    scrollbar-width: none;
+  }
+  nav.tabs .inner::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto; text-decoration: none; font: inherit; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    border-radius: 999px; padding: 7px 14px; font-size: .9rem; white-space: nowrap; -webkit-tap-highlight-color: transparent;
+  }
+  .tab[aria-selected="true"] { background: var(--tc); border-color: var(--tc); color: #111; font-weight: 600; }
+
+  main { max-width: 760px; margin: 0 auto; padding: 16px 14px; }
+
+  .hero, .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+  }
+  .hero { border-top: 4px solid var(--c); }
+  .hero h2, .card h2 { margin: 0 0 4px; font-size: 1.3rem; line-height: 1.25; }
+  .card h3 { margin: 0 0 8px; font-size: 1.05rem; }
+  .card ul { margin: 0; padding-left: 1.1em; }
+  .card li { margin: 6px 0; }
+  .card p { margin: 6px 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+  .pill { font-size: .8rem; background: var(--surface-2); border-radius: 999px; padding: 3px 10px; color: var(--muted); }
+  .note { margin: 12px 0 0; font-size: .92rem; color: var(--muted); }
+  .note b { color: var(--text); }
+  .progress { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin-top: 14px; }
+  .progress > i { display: block; height: 100%; width: 0; background: var(--c); transition: width .3s; }
+  .progress-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; font-size: .85rem; color: var(--muted); }
+  .btn-ghost {
+    background: none; border: 1px solid var(--line); color: var(--muted);
+    border-radius: 8px; padding: 5px 10px; font: inherit; font-size: .82rem; cursor: pointer;
+  }
+  .btn-ghost.confirm { border-color: var(--c); color: var(--text); }
+
+  .ss { border: 1px dashed var(--c); border-radius: calc(var(--radius) + 4px); padding: 8px; margin-bottom: 10px; }
+  .ss-label { font-size: .76rem; text-transform: uppercase; letter-spacing: .08em; color: var(--c); margin: 2px 6px 8px; font-weight: 600; }
+  .ss .ex:last-child { margin-bottom: 0; }
+
+  .ex {
+    background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--c);
+    border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+  }
+  .ex.complete { opacity: .62; }
+  .ex-head { display: flex; gap: 12px; align-items: flex-start; }
+  .num {
+    flex: 0 0 32px; height: 32px; border-radius: 50%;
+    background: var(--c); color: #111; font-weight: 700;
+    display: grid; place-items: center; font-size: .85rem;
+  }
+  .ex-title { flex: 1; min-width: 0; }
+  .ex h3 { margin: 0; font-size: 1.05rem; line-height: 1.3; }
+  .scheme { margin: 2px 0 0; font-size: .92rem; color: var(--muted); }
+  .scheme b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .cue { margin: 10px 0 0; font-size: .9rem; color: var(--muted); }
+  .levels { margin: 10px 0 0; padding: 0; list-style: none; font-size: .88rem; color: var(--muted); }
+  .levels li { padding: 7px 10px; background: var(--surface-2); border-radius: 8px; margin-top: 4px; }
+  .levels b { color: var(--text); }
+  .ex-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 12px; }
+  .sets { display: flex; gap: 6px; flex-wrap: wrap; }
+  .set {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid var(--line); background: var(--surface-2); color: var(--muted);
+    font: inherit; font-weight: 600; cursor: pointer; transition: background .15s, border-color .15s;
+  }
+  .set[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #111; }
+  .finish {
+    display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px;
+    font-size: .92rem; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  .finish input { width: 22px; height: 22px; margin: 0; accent-color: var(--c); cursor: pointer; flex: 0 0 22px; }
+  .ex.complete .finish { border-color: var(--c); }
+  .ex.complete .finish span { font-weight: 600; }
+  .load { display: flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--muted); }
+  .load input {
+    width: 104px; padding: 8px 10px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--surface-2); color: var(--text);
+    font: inherit; font-size: 16px;
+  }
+
+  .week { display: grid; gap: 8px; margin-bottom: 14px; }
+  .day {
+    display: flex; gap: 12px; align-items: center; text-decoration: none;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+    width: 100%; font: inherit; color: inherit; text-align: left; cursor: pointer;
+  }
+  .day .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--dc); flex: 0 0 10px; }
+  .day .d { width: 92px; flex: 0 0 92px; font-weight: 600; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+  .day .what { flex: 1; min-width: 0; }
+  .day .what small { display: block; color: var(--muted); font-size: .84rem; }
+  .day.today { border-color: var(--dc); box-shadow: inset 0 0 0 1px var(--dc); }
+  .today-tag { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #111; background: var(--dc); border-radius: 6px; padding: 1px 6px; }
+
+  table.vol { width: 100%; border-collapse: collapse; font-size: .94rem; }
+  table.vol th, table.vol td { padding: 8px 4px; border-bottom: 1px solid var(--line); text-align: left; }
+  table.vol th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+  table.vol td.n, table.vol th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  table.vol td.n { font-weight: 600; }
+  table.vol tr.light td { color: var(--muted); }
+
+  footer { max-width: 760px; margin: 0 auto; padding: 0 18px 24px; color: var(--muted); font-size: .8rem; }
+
+  #timer {
+    position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom));
+    transform: translate(-50%, 160%);
+    width: min(520px, calc(100% - 24px));
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .35);
+    padding: 12px 14px; transition: transform .25s ease, visibility 0s linear .25s; z-index: 20;
+    visibility: hidden;
+  }
+  #timer.on { transform: translate(-50%, 0); visibility: visible; transition: transform .25s ease, visibility 0s; }
+  #timer .row { display: flex; align-items: center; gap: 12px; }
+  #timer .t { font-size: 1.9rem; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 86px; }
+  #timer .lbl { flex: 1; min-width: 0; font-size: .85rem; color: var(--muted); line-height: 1.3; }
+  #timer button {
+    background: var(--surface-2); border: 1px solid var(--line); color: var(--text);
+    border-radius: 10px; padding: 8px 10px; font: inherit; font-size: .85rem; cursor: pointer;
+  }
+  #timer .bar { height: 4px; background: var(--surface-2); border-radius: 9px; margin-top: 10px; overflow: hidden; }
+  #timer .bar i { display: block; height: 100%; width: 100%; background: var(--tcol, #ff8a4c); }
+  #timer.done .t { color: var(--tcol, #ff8a4c); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <p class="kicker">Prise de muscle · haut du corps prioritaire</p>
+  <h1>Mon programme</h1>
+  <p class="sub">3 séances salle · 2 séances maison · gainage quotidien</p>
+</header>
+
+<nav class="tabs" aria-label="Séances">
+  <div class="inner" id="tabs" role="tablist"></div>
+</nav>
+
+<main id="app"></main>
+
+<footer>Les séries cochées et les charges sont enregistrées dans ce navigateur, sur cet appareil.</footer>
+
+<div id="timer" role="status" aria-live="polite">
+  <div class="row">
+    <div class="t" id="t-time">0:00</div>
+    <div class="lbl" id="t-lbl">Repos</div>
+    <button type="button" id="t-plus">+15 s</button>
+    <button type="button" id="t-skip">Passer</button>
+  </div>
+  <div class="bar"><i id="t-bar"></i></div>
+</div>
+
+<script>
+/* =====================================================================
+   PROGRAMME — modifie ici
+   repos : en secondes (0 = enchaîne directement, utilisé dans les supersets)
+   ss    : deux exercices consécutifs avec le même ss = superset
+   muscle: sert au calcul du volume hebdo (laisser vide pour ne pas compter)
+   ===================================================================== */
+const SEANCES = [
+  {
+    id: "A", onglet: "A · Mardi", couleur: "#ff8a4c",
+    titre: "Séance A — Pecs, dos, bras",
+    quand: "Mardi soir", duree: "≈ 60 min", labelCharge: "Charge",
+    echauffement: "5 min de rameur, puis 2 séries légères de chest press (≈ 50 % puis 70 % de ta charge de travail).",
+    exercices: [
+      { id: "A1", nom: "Chest press", muscle: "Pecs", series: 4, reps: "6–10", repos: 120,
+        conseil: "Omoplates serrées et basses, poignées à hauteur du milieu des pecs. Descente contrôlée en 2–3 s." },
+      { id: "A2", nom: "Seated row — prise neutre", muscle: "Dos", series: 4, reps: "8–12", repos: 120,
+        conseil: "Poitrine contre l'appui, tire avec les coudes vers les hanches, 1 s de pause omoplates serrées." },
+      { id: "A3", nom: "Pec fly", muscle: "Pecs", series: 3, reps: "12–15", repos: 90,
+        conseil: "Bras légèrement fléchis et figés, cherche l'étirement sans forcer sur l'épaule. Contracte 1 s au centre." },
+      { id: "A4", nom: "Leg press", muscle: "Jambes", series: 3, reps: "10–12", repos: 120,
+        conseil: "Pieds largeur de hanches au milieu de la plateforme. Descends vers 90° sans décoller le bas du dos, ne verrouille pas les genoux." },
+      { id: "A5", nom: "Biceps curl (machine)", muscle: "Bras", series: 3, reps: "10–12", repos: 0, ss: "A-bras",
+        conseil: "Coudes calés sur l'appui, monte sans élan, redescends lentement jusqu'à bras presque tendus." },
+      { id: "A6", nom: "Triceps press", muscle: "Bras", series: 3, reps: "10–12", repos: 90, ss: "A-bras",
+        conseil: "Coudes près du corps, extension complète, remonte en contrôlant." }
+    ]
+  },
+  {
+    id: "B", onglet: "B · Jeudi", couleur: "#4cc9f0",
+    titre: "Séance B — Épaules, dos, jambes, abdos",
+    quand: "Jeudi matin", duree: "≈ 55 min", labelCharge: "Charge",
+    echauffement: "5 min de vélo, rotations d'épaules bras tendus, puis 2 séries légères de shoulder press.",
+    exercices: [
+      { id: "B1", nom: "Shoulder press", muscle: "Épaules", series: 4, reps: "6–10", repos: 120,
+        conseil: "Dos collé au dossier, sans cambrer. Redescends les poignées jusqu'à hauteur du menton." },
+      { id: "B2", nom: "Lat pulldown — prise large", muscle: "Dos", series: 4, reps: "8–12", repos: 120,
+        conseil: "Barre vers le haut de la poitrine (jamais derrière la nuque), buste très légèrement incliné, pense « coudes vers les poches »." },
+      { id: "B3", nom: "Élévations latérales à la poulie basse (un bras)", muscle: "Épaules", series: 4, reps: "12–15", repos: 60,
+        conseil: "Câble qui passe devant toi, monte jusqu'à l'horizontale, coude légèrement fléchi. Charge légère : c'est ce muscle qui fait la carrure." },
+      { id: "B4", nom: "Rear delt (machine pec fly, face au dossier)", muscle: "Épaules", series: 3, reps: "12–15", repos: 60,
+        conseil: "Bras à hauteur d'épaules, ouvre en arc de cercle. Ne serre pas les omoplates à fond : c'est l'arrière d'épaule qui travaille." },
+      { id: "B5", nom: "Leg curl", muscle: "Jambes", series: 3, reps: "10–12", repos: 90,
+        conseil: "Bassin plaqué, montée dynamique, descente en 3 s." },
+      { id: "B6", nom: "Leg extension", muscle: "Jambes", series: 3, reps: "12–15", repos: 90,
+        conseil: "Genou aligné sur l'axe de la machine, 1 s de contraction en haut." },
+      { id: "B7", nom: "Abdominal (machine crunch)", muscle: "Abdos", series: 3, reps: "10–15", repos: 60,
+        conseil: "Enroule la colonne (côtes vers le bassin), ne tire pas avec les bras. Charge modérée, contraction maximale." }
+    ]
+  },
+  {
+    id: "C", onglet: "C · Week-end", couleur: "#b892ff",
+    titre: "Séance C — Pecs, dos, épaules, bras",
+    quand: "Samedi soir ou dimanche matin", duree: "≈ 55 min", labelCharge: "Charge",
+    echauffement: "5 min de rameur, puis 2 séries légères de développé incliné à la Smith machine.",
+    optionnel: "Envie d'un peu plus de jambes un jour ? Ajoute leg press 3 × 10–12 en fin de séance.",
+    exercices: [
+      { id: "C1", nom: "Développé incliné à la Smith machine (banc à 30°)", muscle: "Pecs", series: 4, reps: "6–10", repos: 120,
+        conseil: "Barre qui descend sur le haut des pecs, coudes à environ 45° du buste. Pas de banc inclinable ? Voir « Remplacements » dans l'onglet Règles." },
+      { id: "C2", nom: "Tirage horizontal — prise large, coudes ouverts", muscle: "Dos", series: 3, reps: "10–12", repos: 120,
+        conseil: "Machine ou poulie basse avec barre large, coudes à hauteur d'épaules : vise le haut du dos et l'arrière d'épaule." },
+      { id: "C3", nom: "Dips assistés", muscle: "Pecs", series: 3, reps: "8–12", repos: 120,
+        conseil: "Buste légèrement penché en avant, descends jusqu'à épaules au niveau des coudes. Baisse l'assistance au fil des semaines." },
+      { id: "C4", nom: "Élévations latérales à la poulie basse (un bras)", muscle: "Épaules", series: 3, reps: "12–15", repos: 60,
+        conseil: "Même technique que jeudi : contrôle, pas d'élan." },
+      { id: "C5", nom: "Curl à la poulie basse (barre ou corde)", muscle: "Bras", series: 3, reps: "10–12", repos: 0, ss: "C-bras",
+        conseil: "Coudes fixes le long du corps, pas de balancier." },
+      { id: "C6", nom: "Extension triceps à la poulie haute (corde)", muscle: "Bras", series: 3, reps: "10–12", repos: 90, ss: "C-bras",
+        conseil: "Coudes collés au corps, écarte la corde en bas et tiens 1 s." }
+    ]
+  },
+  {
+    id: "M", onglet: "Maison", couleur: "#ffd166", parSemaine: 2,
+    titre: "Maison — Tractions & abdos",
+    quand: "Lundi et vendredi", duree: "≈ 20 min", labelCharge: "Note",
+    echauffement: "Rotations d'épaules, 20 s de suspension à la barre, 5 relevés de genoux lents.",
+    exercices: [
+      { id: "M1", nom: "Tractions", muscle: "Dos", series: 4, reps: "selon ton niveau", repos: 120,
+        conseil: "Lundi en pronation (paumes vers l'avant, un peu plus large que les épaules), vendredi en supination (paumes vers toi). Arrête chaque série 1–2 reps avant l'échec.",
+        niveaux: [
+          ["Moins de 3 tractions", "4 × 3–5 négatives : monte en sautant, descends en 4–5 s."],
+          ["3 à 7", "4 séries de (ton max − 2). Ajoute 1 rep dès que toutes les séries passent."],
+          ["8 à 12", "4 × 6–10."],
+          ["Plus de 12 propres", "Ajoute du lest (sac à dos avec bouteilles ou livres)."]
+        ] },
+      { id: "M2", nom: "Relevés de genoux à la chaise romaine", muscle: "Abdos", series: 3, reps: "10–15", repos: 60,
+        conseil: "Enroule le bassin vers la poitrine, sans balancier. Quand 15 reps deviennent faciles : jambes tendues." },
+      { id: "M3", nom: "Planche", series: 3, reps: "30–60 s", repos: 45,
+        conseil: "Fessiers et abdos serrés, corps aligné, ne laisse pas tomber le bassin. Ajoute 5 s par semaine." },
+      { id: "M4", nom: "Gainage latéral", series: 2, reps: "30–45 s / côté", repos: 30,
+        conseil: "Coude sous l'épaule, hanches hautes et alignées." }
+    ]
+  },
+  {
+    id: "G", onglet: "Gainage", couleur: "#7ae582", parSemaine: 0, sansCharge: true,
+    titre: "Gainage du jour — 5 min",
+    quand: "Mardi, mercredi, samedi, dimanche", duree: "≈ 5 min",
+    echauffement: "Circuit : enchaîne les 3 exercices, puis refais un tour. Chaque bouton = un tour. Tu peux le faire juste après ta séance salle.",
+    exercices: [
+      { id: "G1", nom: "Planche", series: 2, reps: "45 s", repos: 15,
+        conseil: "Corps gainé de la tête aux talons." },
+      { id: "G2", nom: "Gainage latéral", series: 2, reps: "30 s / côté", repos: 15,
+        conseil: "Hanches hautes, ne t'affaisse pas." },
+      { id: "G3", nom: "Hollow hold", series: 2, reps: "20–30 s", repos: 45,
+        conseil: "Sur le dos, bas du dos plaqué au sol, bras et jambes tendus décollés. Plie les genoux si c'est trop dur." }
+    ]
+  }
+];
+
+/* Semaine type : s = id de la séance vers laquelle pointe le jour */
+const SEMAINE = [
+  { j: "Lundi",    s: "M", txt: "Maison — tractions en pronation + abdos", sub: "≈ 20 min" },
+  { j: "Mardi",    s: "A", txt: "Salle A — pecs, dos, bras", sub: "Le soir · + gainage 5 min" },
+  { j: "Mercredi", s: "G", txt: "Repos", sub: "Gainage 5 min" },
+  { j: "Jeudi",    s: "B", txt: "Salle B — épaules, dos, jambes, abdos", sub: "Le matin" },
+  { j: "Vendredi", s: "M", txt: "Maison — tractions en supination + abdos", sub: "≈ 20 min" },
+  { j: "Samedi",   s: "C", txt: "Salle C le soir — ou repos", sub: "+ gainage 5 min" },
+  { j: "Dimanche", s: "C", txt: "Salle C le matin — ou repos", sub: "+ gainage 5 min" }
+];
+
+const REGLES = `
+<section class="card">
+  <h3>Progresser</h3>
+  <ul>
+    <li><b>Double progression</b> : reste dans la fourchette de reps. Quand tu atteins le haut de la fourchette sur toutes les séries avec une technique propre, monte d'un cran à la séance suivante et repars du bas de la fourchette.</li>
+    <li><b>Intensité</b> : termine chaque série à 1–2 reps de l'échec. Sur l'isolation (élévations, curls, extensions…), la dernière série peut aller jusqu'à l'échec.</li>
+    <li><b>Tempo</b> : descente contrôlée en 2–3 s, montée dynamique, pas d'élan.</li>
+    <li><b>Note tes charges</b> à chaque séance dans le champ « Charge ».</li>
+    <li><b>Semaine allégée</b> toutes les 6 à 8 semaines, ou si tu stagnes et te sens cramé : mêmes charges, deux fois moins de séries.</li>
+  </ul>
+</section>
+<section class="card">
+  <h3>Abdos visibles</h3>
+  <ul>
+    <li>Les abdos se voient surtout grâce à un taux de gras bas : gainage et relevés les rendent plus épais, mais ne brûlent pas la graisse du ventre.</li>
+    <li>Mange en <b>léger surplus</b> (≈ +200 à 300 kcal/jour) plutôt qu'en gros surplus : tu prends du muscle sans noyer tes abdos sous le gras.</li>
+    <li><b>Protéines</b> : 1,6 à 2 g par kg de poids de corps par jour, réparties sur 3–4 repas.</li>
+    <li>Pèse-toi et mesure ton <b>tour de taille</b> au nombril toutes les 2 semaines : poids qui monte doucement (≈ 0,5 kg/mois) et taille stable = parfait. Si la taille grimpe vite, réduis un peu les portions.</li>
+    <li><b>Sommeil</b> : 7 à 9 h. C'est là que le muscle se construit.</li>
+  </ul>
+</section>
+<section class="card">
+  <h3>Remplacements si une machine est prise</h3>
+  <ul>
+    <li>Développé incliné Smith (ou pas de banc inclinable) → chest press, puis écarté à la poulie du bas vers le haut 3 × 12–15.</li>
+    <li>Lat pulldown → chin assist (tractions assistées), même fourchette.</li>
+    <li>Seated row ↔ tirage horizontal à la poulie basse.</li>
+    <li>Shoulder press → développé assis à la Smith machine, barre devant le visage.</li>
+    <li>Dips assistés → triceps press + 1 série de plus au pec fly.</li>
+    <li>Leg press → squat à la Smith machine 3 × 8–12.</li>
+  </ul>
+</section>
+<section class="card">
+  <h3>Cardio</h3>
+  <ul>
+    <li>10–15 min de vélo ou de tapis à allure tranquille en fin de séance, 1 à 2 fois par semaine : bon pour le cœur, sans freiner la prise de muscle.</li>
+  </ul>
+</section>`;
+
+/* =====================================================================
+   MÉCANIQUE — pas besoin de toucher en dessous
+   ===================================================================== */
+const PREFIX = "prog-muscu:v1:";
+const store = (() => {
+  const mem = {};
+  return {
+    get(k, d) {
+      try { const v = localStorage.getItem(PREFIX + k); return v === null ? d : JSON.parse(v); }
+      catch (e) { return k in mem ? mem[k] : d; }
+    },
+    set(k, v) {
+      try { localStorage.setItem(PREFIX + k, JSON.stringify(v)); }
+      catch (e) { mem[k] = v; }
+    }
+  };
+})();
+
+const $ = (sel) => document.querySelector(sel);
+const byId = Object.fromEntries(SEANCES.map(s => [s.id, s]));
+const EXTRA_TABS = [
+  { id: "semaine", onglet: "Semaine", couleur: "#c9ced8" },
+  ...SEANCES,
+  { id: "regles", onglet: "Règles", couleur: "#c9ced8" }
+];
+let current = null;
+
+function fmtClock(sec) {
+  return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+}
+function fmtRepos(sec) {
+  if (!sec) return "aucun, enchaîne";
+  if (sec < 60) return sec + " s";
+  const m = Math.floor(sec / 60), r = sec % 60;
+  return r ? `${m} min ${r}` : `${m} min`;
+}
+function todayIndex() { return (new Date().getDay() + 6) % 7; } // 0 = lundi
+function defaultTab() { return SEMAINE[todayIndex()].s || "semaine"; }
+
+/* ---------- Onglets ---------- */
+function renderTabs() {
+  $("#tabs").innerHTML = EXTRA_TABS.map(t =>
+    `<button type="button" class="tab" role="tab" data-go="${t.id}" style="--tc:${t.couleur}" aria-selected="${t.id === current}">${t.onglet}</button>`
+  ).join("");
+  const active = $("#tabs .tab[aria-selected='true']");
+  if (active) active.scrollIntoView({ block: "nearest", inline: "center" });
+}
+
+/* ---------- Semaine ---------- */
+function volume() {
+  const tot = {};
+  SEANCES.forEach(s => {
+    const k = s.parSemaine ?? 1;
+    s.exercices.forEach(e => {
+      if (!e.muscle || !k) return;
+      tot[e.muscle] = (tot[e.muscle] || 0) + e.series * k;
+    });
+  });
+  return tot;
+}
+
+function renderSemaine() {
+  const t = todayIndex();
+  const days = SEMAINE.map((d, i) => {
+    const s = byId[d.s];
+    const col = s ? s.couleur : "var(--line)";
+    return `<button type="button" class="day${i === t ? " today" : ""}" data-go="${d.s}" style="--dc:${col}">
+      <span class="dot"></span>
+      <span class="d">${d.j}${i === t ? '<span class="today-tag">Auj.</span>' : ""}</span>
+      <span class="what">${d.txt}<small>${d.sub}</small></span>
+    </button>`;
+  }).join("");
+
+  const vol = volume();
+  const ordre = ["Pecs", "Dos", "Épaules", "Bras", "Abdos", "Jambes"];
+  const haut = ["Pecs", "Dos", "Épaules", "Bras"].reduce((a, m) => a + (vol[m] || 0), 0);
+  const rows = ordre.filter(m => vol[m]).map(m =>
+    `<tr class="${m === "Jambes" ? "light" : ""}"><td>${m}</td><td class="n">${vol[m]}</td></tr>`
+  ).join("");
+
+  return `
+    <section class="hero" style="--c:#c9ced8">
+      <h2>Semaine type</h2>
+      <p class="note">Touche un jour pour ouvrir la séance correspondante.</p>
+    </section>
+    <div class="week">${days}</div>
+    <section class="card">
+      <h3>Volume hebdomadaire</h3>
+      <table class="vol">
+        <thead><tr><th>Groupe</th><th class="n">Séries / semaine</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p class="note"><b>${haut} séries</b> pour le haut du corps (tractions comprises), <b>${vol.Jambes || 0}</b> pour les jambes :
+      le minimum pour qu'elles progressent et que la silhouette reste équilibrée.</p>
+    </section>`;
+}
+
+/* ---------- Séance ---------- */
+function doneState(id) { return store.get("done:" + id, {}); }
+function countDone(s) {
+  const d = doneState(s.id);
+  let done = 0, total = 0;
+  s.exercices.forEach(e => {
+    total += e.series;
+    done += (d[e.id] || []).filter(Boolean).length;
+  });
+  return { done, total };
+}
+
+function card(e, label, s, d) {
+  const sets = Array.from({ length: e.series }, (_, k) => {
+    const on = !!(d[e.id] && d[e.id][k]);
+    return `<button type="button" class="set" data-ex="${e.id}" data-i="${k}" aria-pressed="${on}" aria-label="${e.nom}, série ${k + 1}">${k + 1}</button>`;
+  }).join("");
+  const complete = (d[e.id] || []).filter(Boolean).length >= e.series;
+  const levels = e.niveaux
+    ? `<ul class="levels">${e.niveaux.map(([a, b]) => `<li><b>${a}</b> — ${b}</li>`).join("")}</ul>` : "";
+  const load = s.sansCharge ? "" :
+    `<label class="load">${s.labelCharge || "Charge"} <input type="text" inputmode="text" autocomplete="off" data-load="${e.id}" placeholder="${s.labelCharge === "Note" ? "reps, lest…" : "kg"}"></label>`;
+  return `
+    <article class="ex${complete ? " complete" : ""}" data-card="${e.id}">
+      <div class="ex-head">
+        <div class="num">${label}</div>
+        <div class="ex-title">
+          <h3>${e.nom}</h3>
+          <p class="scheme"><b>${e.series} × ${e.reps}</b> · repos ${fmtRepos(e.repos)}</p>
+        </div>
+      </div>
+      ${e.conseil ? `<p class="cue">${e.conseil}</p>` : ""}
+      ${levels}
+      <div class="ex-foot">
+        <div class="sets" role="group" aria-label="Séries">${sets}</div>
+        ${load}
+      </div>
+      <label class="finish"><input type="checkbox" data-finish="${e.id}"${complete ? " checked" : ""}><span>Exercice terminé</span></label>
+    </article>`;
+}
+
+function renderSeance(s) {
+  const d = doneState(s.id);
+  const { done, total } = countDone(s);
+  let body = "", n = 0, i = 0;
+  const ex = s.exercices;
+  while (i < ex.length) {
+    if (ex[i].ss) {
+      const g = ex[i].ss, members = [];
+      while (i < ex.length && ex[i].ss === g) members.push(ex[i++]);
+      n++;
+      body += `<div class="ss"><p class="ss-label">Superset — enchaîne sans pause, puis repos</p>${
+        members.map((e, j) => card(e, n + "abcd"[j], s, d)).join("")}</div>`;
+    } else {
+      n++;
+      body += card(ex[i++], String(n), s, d);
+    }
+  }
+  return `
+    <section class="hero">
+      <h2>${s.titre}</h2>
+      <div class="meta">
+        <span class="pill">${s.quand}</span>
+        <span class="pill">${s.duree}</span>
+        <span class="pill">${total} séries</span>
+      </div>
+      ${s.echauffement ? `<p class="note"><b>Échauffement :</b> ${s.echauffement}</p>` : ""}
+      ${s.optionnel ? `<p class="note"><b>Option :</b> ${s.optionnel}</p>` : ""}
+      <div class="progress"><i id="prog-bar" style="width:${total ? done / total * 100 : 0}%"></i></div>
+      <div class="progress-row">
+        <span id="prog-txt">${done} / ${total} séries faites</span>
+        <button type="button" class="btn-ghost" id="reset">Réinitialiser</button>
+      </div>
+    </section>
+    ${body}`;
+}
+
+function updateProgress(s) {
+  const { done, total } = countDone(s);
+  const bar = $("#prog-bar"), txt = $("#prog-txt");
+  if (bar) bar.style.width = (total ? done / total * 100 : 0) + "%";
+  if (txt) txt.textContent = `${done} / ${total} séries faites`;
+  return { done, total };
+}
+
+/* ---------- Rendu principal ---------- */
+function render() {
+  renderTabs();
+  const app = $("#app");
+  const s = byId[current];
+  const tab = EXTRA_TABS.find(t => t.id === current);
+  app.style.setProperty("--c", tab ? tab.couleur : "#ff8a4c");
+
+  if (current === "semaine") app.innerHTML = renderSemaine();
+  else if (current === "regles") app.innerHTML = `<section class="hero" style="--c:#c9ced8"><h2>Règles du jeu</h2><p class="note">Progression, alimentation et plans B.</p></section>${REGLES}`;
+  else if (s) {
+    app.innerHTML = renderSeance(s);
+    app.querySelectorAll("[data-load]").forEach(inp => {
+      inp.value = store.get("load:" + inp.dataset.load, "");
+      inp.addEventListener("input", () => store.set("load:" + inp.dataset.load, inp.value));
+    });
+  }
+}
+
+function go(id, fromHash) {
+  current = EXTRA_TABS.some(t => t.id === id) ? id : defaultTab();
+  render();
+  try { window.scrollTo(0, 0); } catch (e) {}
+  if (!fromHash) {
+    try { history.replaceState(null, "", "#" + current); } catch (e) { /* aperçu sandboxé : on ignore */ }
+  }
+}
+function route() {
+  let id = "";
+  try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+  go(id, true);
+}
+
+/* Navigation : tout bouton avec data-go change d'onglet (marche aussi dans un aperçu intégré) */
+document.addEventListener("click", (ev) => {
+  const el = ev.target.closest("[data-go]");
+  if (!el) return;
+  ev.preventDefault();
+  go(el.dataset.go);
+});
+
+/* ---------- Interactions ---------- */
+$("#app").addEventListener("click", (ev) => {
+  const btn = ev.target.closest(".set");
+  if (btn) {
+    const s = byId[current];
+    if (!s) return;
+    initAudio();
+    const exId = btn.dataset.ex, i = +btn.dataset.i;
+    const e = s.exercices.find(x => x.id === exId);
+    const d = doneState(s.id);
+    const arr = d[exId] || Array(e.series).fill(false);
+    arr[i] = !arr[i];
+    d[exId] = arr;
+    store.set("done:" + s.id, d);
+    btn.setAttribute("aria-pressed", String(arr[i]));
+    const cardEl = btn.closest(".ex");
+    syncCard(cardEl, arr.filter(Boolean).length >= e.series);
+    const { done, total } = updateProgress(s);
+    if (arr[i]) {
+      if (done >= total) showMessage("✓", "Séance terminée, bien joué !", s.couleur);
+      else if (e.repos) startRest(e.repos, `${e.nom} — série ${i + 1}/${e.series} faite`, s.couleur);
+    }
+    return;
+  }
+  const reset = ev.target.closest("#reset");
+  if (reset) {
+    if (!reset.classList.contains("confirm")) {
+      reset.classList.add("confirm");
+      reset.textContent = "Confirmer ?";
+      setTimeout(() => { reset.classList.remove("confirm"); reset.textContent = "Réinitialiser"; }, 3000);
+      return;
+    }
+    store.set("done:" + current, {});
+    hideTimer();
+    render();
+  }
+});
+
+function syncCard(cardEl, complete) {
+  if (!cardEl) return;
+  cardEl.classList.toggle("complete", complete);
+  const cb = cardEl.querySelector("[data-finish]");
+  if (cb) cb.checked = complete;
+}
+
+/* Case « Exercice terminé » : cochée = toutes les séries faites, décochée = séries remises à zéro */
+$("#app").addEventListener("change", (ev) => {
+  const cb = ev.target.closest("[data-finish]");
+  if (!cb) return;
+  const s = byId[current];
+  if (!s) return;
+  const e = s.exercices.find(x => x.id === cb.dataset.finish);
+  const d = doneState(s.id);
+  d[e.id] = Array(e.series).fill(cb.checked);
+  store.set("done:" + s.id, d);
+  const cardEl = cb.closest(".ex");
+  cardEl.querySelectorAll(".set").forEach(b => b.setAttribute("aria-pressed", String(cb.checked)));
+  syncCard(cardEl, cb.checked);
+  const { done, total } = updateProgress(s);
+  if (cb.checked && done >= total) showMessage("✓", "Séance terminée, bien joué !", s.couleur);
+});
+
+/* ---------- Minuteur de repos ---------- */
+const timerEl = $("#timer");
+const T = { end: 0, total: 0, id: null, ctx: null };
+
+function initAudio() {
+  try {
+    if (!T.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) T.ctx = new AC();
+    }
+    if (T.ctx && T.ctx.state === "suspended") T.ctx.resume();
+  } catch (e) { /* pas de son, pas grave */ }
+}
+function bip() {
+  if (!T.ctx) return;
+  try {
+    [0, 0.25].forEach(delay => {
+      const o = T.ctx.createOscillator(), g = T.ctx.createGain();
+      o.frequency.value = 880;
+      o.connect(g); g.connect(T.ctx.destination);
+      const t = T.ctx.currentTime + delay;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.3, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      o.start(t); o.stop(t + 0.2);
+    });
+  } catch (e) { /* ignore */ }
+}
+function startRest(sec, label, color) {
+  clearInterval(T.id);
+  T.total = sec;
+  T.end = Date.now() + sec * 1000;
+  timerEl.style.setProperty("--tcol", color);
+  timerEl.classList.remove("done");
+  timerEl.classList.add("on");
+  $("#t-lbl").textContent = label;
+  $("#t-plus").hidden = false;
+  tick();
+  T.id = setInterval(tick, 250);
+}
+function tick() {
+  const left = Math.max(0, T.end - Date.now());
+  $("#t-time").textContent = fmtClock(Math.ceil(left / 1000));
+  $("#t-bar").style.width = (T.total ? left / (T.total * 1000) * 100 : 0) + "%";
+  if (left <= 0) {
+    clearInterval(T.id); T.id = null;
+    timerEl.classList.add("done");
+    $("#t-lbl").textContent = "Repos terminé — série suivante !";
+    bip();
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    setTimeout(() => { if (!T.id && timerEl.classList.contains("done")) hideTimer(); }, 6000);
+  }
+}
+function showMessage(big, text, color) {
+  clearInterval(T.id); T.id = null;
+  timerEl.style.setProperty("--tcol", color);
+  timerEl.classList.add("on", "done");
+  $("#t-time").textContent = big;
+  $("#t-lbl").textContent = text;
+  $("#t-bar").style.width = "100%";
+  $("#t-plus").hidden = true;
+  setTimeout(() => { if (!T.id) hideTimer(); }, 5000);
+}
+function hideTimer() {
+  clearInterval(T.id); T.id = null;
+  timerEl.classList.remove("on", "done");
+}
+$("#t-plus").addEventListener("click", () => {
+  if (T.id) { T.end += 15000; T.total += 15; }
+  else startRest(15, "Encore 15 s", getComputedStyle(timerEl).getPropertyValue("--tcol").trim() || "#ff8a4c");
+});
+$("#t-skip").addEventListener("click", hideTimer);
+
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
